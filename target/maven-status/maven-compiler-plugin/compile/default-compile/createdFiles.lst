@@ -1,0 +1,14 @@
+br\com\fiap\ms\pedidoservice\usecase\ProcessarPedidoService.class
+br\com\fiap\ms\pedidoservice\gateway\external\ClienteServiceClient.class
+br\com\fiap\ms\pedidoservice\gateway\consumer\PedidoConsumer.class
+br\com\fiap\ms\pedidoservice\gateway\external\PagamentoServiceClient.class
+br\com\fiap\ms\pedidoservice\domain\Pedido.class
+br\com\fiap\ms\pedidoservice\gateway\external\ProdutoServiceClient.class
+br\com\fiap\ms\pedidoservice\usecase\ProcessarPedidoUseCase.class
+br\com\fiap\ms\pedidoservice\gateway\database\PedidoRepository.class
+br\com\fiap\ms\pedidoservice\usecase\PedidoPersistenceService.class
+br\com\fiap\ms\pedidoservice\PedidoServiceApplication.class
+br\com\fiap\ms\pedidoservice\gateway\external\EstoqueServiceClient.class
+br\com\fiap\ms\pedidoservice\domain\PedidoEntity$PedidoEntityBuilder.class
+br\com\fiap\ms\pedidoservice\domain\PedidoEntity.class
+br\com\fiap\ms\pedidoservice\controller\json\PedidoController.class
