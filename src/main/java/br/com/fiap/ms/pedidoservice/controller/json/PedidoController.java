@@ -1,14 +1,11 @@
 package br.com.fiap.ms.pedidoservice.controller.json;
 
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.entity.ClienteJsonResponse;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.service.ClienteService;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.ClienteGateway;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 /**
  * Controlador REST para gerenciar pedidos.
@@ -20,7 +17,7 @@ import java.util.List;
 public class PedidoController {
 
     private final PedidoPersistenceService service;
-    private final ClienteService clienteService;
+    private final ClienteGateway clienteService;
 
     @GetMapping("/{id}")
     public ResponseEntity<PedidoEntity> buscarPorId(@PathVariable Long id) {

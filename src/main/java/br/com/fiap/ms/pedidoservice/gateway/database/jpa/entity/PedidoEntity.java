@@ -1,4 +1,4 @@
-package br.com.fiap.ms.pedidoservice.domain;
+package br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

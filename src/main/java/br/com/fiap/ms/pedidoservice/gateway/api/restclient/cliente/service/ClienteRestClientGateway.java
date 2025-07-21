@@ -1,23 +1,22 @@
-package br.com.fiap.ms.pedidoservice.gateway.external.cliente.service;
+package br.com.fiap.ms.pedidoservice.gateway.api.restclient.cliente.service;
 
 import br.com.fiap.ms.pedidoservice.domain.Cliente;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.entity.ClienteJsonRequest;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.entity.ClienteJsonResponse;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.entity.EnderecoJsonRequest;
+import br.com.fiap.ms.pedidoservice.gateway.ClienteGateway;
+import br.com.fiap.ms.pedidoservice.gateway.api.restclient.cliente.request.ClienteJsonRequest;
+import br.com.fiap.ms.pedidoservice.gateway.api.restclient.cliente.response.ClienteJsonResponse;
+import br.com.fiap.ms.pedidoservice.gateway.api.restclient.cliente.request.EnderecoJsonRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ClienteService implements IClienteService {
+public class ClienteRestClientGateway implements ClienteGateway {
 
     @Override
     public List<ClienteJsonResponse> buscarClientes() {

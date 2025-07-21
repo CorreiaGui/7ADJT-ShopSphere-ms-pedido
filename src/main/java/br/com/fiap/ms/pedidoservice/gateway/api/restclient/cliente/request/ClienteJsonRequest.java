@@ -1,4 +1,4 @@
-package br.com.fiap.ms.pedidoservice.gateway.external.cliente.entity;
+package br.com.fiap.ms.pedidoservice.gateway.api.restclient.cliente.request;
 
 import java.time.LocalDate;
 
