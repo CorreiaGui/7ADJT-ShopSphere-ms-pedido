@@ -29,6 +29,7 @@ services:
     container_name: pedido_service
     ports:
       - "8082:8080"          # Porta para expor API do pedido-service
+      - "5006:5006"
     depends_on:
       - pedido-db
       - rabbitmq
@@ -41,7 +42,15 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
+      _JAVA_OPTIONS: >
+        -Xdebug 
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
     restart: always
 
 volumes:
   pedido_pgdata:
+
+networks:
+  default:
+    name: 7adjt-shopsphere-ms-pedido-service_default
+    external: true
