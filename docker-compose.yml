@@ -1,6 +1,6 @@
 services:
   pedido-db:
-    image: postgres:15
+    image: postgres:17-alpine
     container_name: pedido_db
     environment:
       POSTGRES_DB: pedido_db
@@ -10,6 +10,34 @@ services:
       - "5433:5432"          # Porta externa diferente para evitar conflito
     volumes:
       - pedido_pgdata:/var/lib/postgresql/data
+    restart: always
+
+  estoque-db:
+    image: postgres:17-alpine
+    container_name: estoque_db
+    restart: always
+    environment:
+      POSTGRES_DB: estoque_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5434:5432
+    volumes:
+      - estoque_pgdata:/var/lib/postgresql/data
+
+  estoque-service:
+    image: larissahsilva/ms-estoque:latest
+    container_name: estoque_service
+    depends_on:
+      - estoque-db
+    environment:
+      POSTGRES_HOST: estoque-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: estoque_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "8083:8080" # expõe porta do pagamento (internamente 8080, externamente 8083)
     restart: always
 
   rabbitmq:
@@ -32,6 +60,7 @@ services:
     depends_on:
       - pedido-db
       - rabbitmq
+      - estoque-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://pedido-db:5432/pedido_db
       SPRING_DATASOURCE_USERNAME: postgres
@@ -41,7 +70,10 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
+      ESTOQUE_URL: http://estoque-service:8083 # Endpoint base do pagamento para uso no Feign
     restart: always
 
 volumes:
   pedido_pgdata:
+  estoque_pgdata:
+
