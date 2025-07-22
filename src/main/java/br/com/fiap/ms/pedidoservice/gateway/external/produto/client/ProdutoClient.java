@@ -1,4 +1,4 @@
-package br.com.fiap.ms.pedidoservice.gateway.external.produto.service;
+package br.com.fiap.ms.pedidoservice.gateway.external.produto.client;
 
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.entity.ProdutoResponse;
 import org.springframework.cloud.openfeign.FeignClient;
