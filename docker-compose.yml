@@ -15,15 +15,41 @@ services:
   estoque-db:
     image: postgres:17-alpine
     container_name: estoque_db
-    restart: always
     environment:
       POSTGRES_DB: estoque_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - 5434:5432
+      - "5434:5432"
     volumes:
       - estoque_pgdata:/var/lib/postgresql/data
+    restart: always
+
+  produto-db:
+    image: postgres:17-alpine
+    container_name: produto_db
+    environment:
+      POSTGRES_DB: tech_challenge
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+    ports:
+      - "5435:5432"
+    volumes:
+      - produto_pgdata:/var/lib/postgresql/data
+    restart: always
+
+  produto-service:
+    image: correiagui/produto-service:latest
+    container_name: produto_service
+    depends_on:
+      - produto-db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://produto-db:5432/tech_challenge
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 123456
+    ports:
+      - "8081:8080"
+    restart: always
 
   estoque-service:
     image: larissahsilva/ms-estoque:latest
@@ -37,7 +63,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "8083:8080" # expõe porta do pagamento (internamente 8080, externamente 8083)
+      - "8083:8080" # expõe porta do estoque (internamente 8080, externamente 8083)
     restart: always
 
   rabbitmq:
@@ -55,12 +81,13 @@ services:
     build:
       context: .
     container_name: pedido_service
-    ports:
-      - "8082:8080"          # Porta para expor API do pedido-service
     depends_on:
       - pedido-db
       - rabbitmq
       - estoque-service
+      - produto-service
+    ports:
+      - "8082:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://pedido-db:5432/pedido_db
       SPRING_DATASOURCE_USERNAME: postgres
@@ -70,10 +97,12 @@ services:
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
-      ESTOQUE_URL: http://estoque-service:8083 # Endpoint base do pagamento para uso no Feign
+
+      ESTOQUE_URL: http://estoque-service:8083
+      PRODUTO_URL: http://produto-service:8080
     restart: always
 
 volumes:
   pedido_pgdata:
   estoque_pgdata:
-
+  produto_pgdata:

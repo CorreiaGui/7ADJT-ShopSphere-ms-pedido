@@ -1,6 +1,8 @@
 package br.com.fiap.ms.pedidoservice.controller.json;
 
 import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.external.produto.entity.ProdutoResponse;
+import br.com.fiap.ms.pedidoservice.gateway.external.produto.service.ProdutoService;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +16,17 @@ import org.springframework.web.bind.annotation.*;
 public class PedidoController {
 
     private final PedidoPersistenceService service;
+    private final ProdutoService produtoService;
 
-    public PedidoController(PedidoPersistenceService service) {
+    public PedidoController(PedidoPersistenceService service, ProdutoService produtoService) {
         this.service = service;
+        this.produtoService = produtoService;
+    }
+
+    @GetMapping("/produto/{sku}")
+    public ResponseEntity<ProdutoResponse> buscarProduto(@PathVariable String sku) {
+        ProdutoResponse produto = produtoService.buscarPorSku(sku);
+        return ResponseEntity.ok(produto);
     }
 
     @GetMapping("/{id}")
