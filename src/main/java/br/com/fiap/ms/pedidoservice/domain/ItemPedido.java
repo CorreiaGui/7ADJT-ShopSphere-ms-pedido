@@ -1,33 +1,31 @@
 package br.com.fiap.ms.pedidoservice.domain;
 
-
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pedido {
+public class ItemPedido {
 
     private UUID id;
 
     private Integer numeroPedido;
 
-    private String cpf;
+    private String sku;
 
-    private BigDecimal valorTotal;
+    private Integer quantidade;
 
     private LocalDateTime dataCriacao;
 
     private LocalDateTime dataUltimaAlteracao;
 
-    private List<ItemPedido> itens;
+    private PedidoEntity pedido;
 }
