@@ -1,6 +1,6 @@
 package br.com.fiap.ms.pedidoservice.controller.handlers;
 
-import br.com.fiap.shopsphere.ms.produto.exception.SystemBaseException;
+import br.com.fiap.ms.pedidoservice.exception.SystemBaseException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
