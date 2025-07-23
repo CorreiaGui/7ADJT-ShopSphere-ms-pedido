@@ -5,12 +5,9 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.UUID;
 
-import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
@@ -19,27 +16,21 @@ import static jakarta.persistence.GenerationType.AUTO;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "pedido")
-public class PedidoEntity {
+@Table(name = "item_pedido")
+public class ItemPedidoEntity {
 
     @Id
     @GeneratedValue(strategy = AUTO)
     private UUID id;
 
-    @Column(name = "numero_pedido", nullable = false, unique = true)
+    @Column(name = "numero_pedido", nullable = false)
     private Integer numeroPedido;
 
-    @Column(name = "pagamento_id", nullable = false)
-    private UUID pagamentoId;
+    @Column(name = "sku", nullable = false, length = 255)
+    private String sku;
 
-    @Column(name = "cpf", nullable = false, length = 11)
-    private String cpf;
-
-    @Column(name = "status", nullable = false)
-    private String status;
-
-    @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)
-    private BigDecimal valorTotal;
+    @Column(name = "quantidade", nullable = false)
+    private Integer quantidade;
 
     @CreationTimestamp
     @Column(name = "data_criacao", nullable = false, updatable = false)
@@ -49,6 +40,7 @@ public class PedidoEntity {
     @Column(name = "data_ultima_alteracao")
     private LocalDateTime dataUltimaAlteracao;
 
-    @OneToMany(mappedBy = "pedido", cascade = ALL, orphanRemoval = true)
-    private List<ItemPedidoEntity> itens;
+    @ManyToOne
+    @JoinColumn(name = "numero_pedido", referencedColumnName = "numero_pedido", insertable = false, updatable = false)
+    private PedidoEntity pedido;
 }
