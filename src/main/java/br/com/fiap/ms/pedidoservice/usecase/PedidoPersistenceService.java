@@ -1,8 +1,10 @@
 package br.com.fiap.ms.pedidoservice.usecase;
 
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
-import br.com.fiap.ms.pedidoservice.gateway.database.PedidoRepository;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.PedidoNumeroGenerator;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.mapper.PedidoEntityMapper;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,32 +14,24 @@ import org.springframework.stereotype.Service;
 @Service
 public class PedidoPersistenceService {
 
-    private final PedidoRepository repository;
+    private final PedidoRepository pedidoRepository;
+    private final PedidoNumeroGenerator pedidoNumeroGenerator;
 
-    public PedidoPersistenceService(PedidoRepository repository) {
-        this.repository = repository;
+    public PedidoPersistenceService(
+            PedidoRepository pedidoRepository,
+            PedidoNumeroGenerator pedidoNumeroGenerator
+    ) {
+        this.pedidoRepository = pedidoRepository;
+        this.pedidoNumeroGenerator = pedidoNumeroGenerator;
     }
 
-    /**
-     * Salva um pedido no repositório.
-     *
-     * @param pedido O pedido a ser salvo.
-     * @return O PedidoEntity salvo.
-     */
-    public PedidoEntity salvar(Pedido pedido) {
-        PedidoEntity entity = PedidoEntity.builder()
-                .idCliente(pedido.getIdCliente())
-                .numeroCartao(pedido.getNumeroCartao())
-                .valorTotal(pedido.getValorTotal())
-                .status(pedido.getStatus())
-                .skus(pedido.getSkus())
-                .quantidades(pedido.getQuantidades())
-                .build();
-
-        return repository.save(entity);
+    public void salvar(Pedido pedido) {
+        Integer numeroPedido = pedidoNumeroGenerator.gerarNumeroPedido();
+        PedidoEntity entity = PedidoEntityMapper.toEntity(pedido, numeroPedido);
+        pedidoRepository.save(entity);
     }
 
     public PedidoEntity buscarPorId(Long id) {
-        return repository.findById(id).orElse(null);
+        return pedidoRepository.findById(id).orElse(null);
     }
 }

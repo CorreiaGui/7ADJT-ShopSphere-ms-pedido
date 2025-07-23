@@ -1,11 +1,14 @@
 package br.com.fiap.ms.pedidoservice.usecase;
 
+import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.external.ClienteServiceClient;
 import br.com.fiap.ms.pedidoservice.gateway.external.EstoqueServiceClient;
 import br.com.fiap.ms.pedidoservice.gateway.external.PagamentoServiceClient;
 import br.com.fiap.ms.pedidoservice.gateway.external.ProdutoServiceClient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Serviço responsável por processar pedidos.
@@ -37,12 +40,17 @@ public class ProcessarPedidoService implements ProcessarPedidoUseCase {
     public void processar(Pedido pedido) {
         pedido.setStatus("ABERTO");
         System.out.println("Processando pedido: " + pedido);
+
         if (!clienteClient.clienteExiste(pedido.getIdCliente())) {
             pedido.setStatus("CLIENTE_INVALIDO");
             return;
         }
 
-        if (!produtoClient.produtosValidos(pedido.getSkus())) {
+        List<String> skus = pedido.getItens().stream()
+                .map(ItemPedido::getSku)
+                .toList(); // use Collectors.toList() se estiver com Java 8
+
+        if (!produtoClient.produtosValidos(skus)) {
             pedido.setStatus("PRODUTO_INVALIDO");
             return;
         }
@@ -65,6 +73,6 @@ public class ProcessarPedidoService implements ProcessarPedidoUseCase {
 
         pedido.setStatus("FECHADO_COM_SUCESSO");
         pedidoPersistenceService.salvar(pedido);
-
     }
+
 }

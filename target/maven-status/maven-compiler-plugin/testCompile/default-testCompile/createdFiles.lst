@@ -1,0 +1,4 @@
+br\com\fiap\ms\pedidoservice\usecase\ProcessarPedidoServiceTest.class
+br\com\fiap\ms\pedidoservice\gateway\database\jpa\mapper\PedidoEntityMapperTest.class
+br\com\fiap\ms\pedidoservice\gateway\consumer\PedidoConsumerTest.class
+br\com\fiap\ms\pedidoservice\usecase\PedidoPersistenceServiceTest.class

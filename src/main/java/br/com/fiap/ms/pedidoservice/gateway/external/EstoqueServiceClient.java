@@ -9,7 +9,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class EstoqueServiceClient {
+
     public boolean verificarEstoque(Pedido pedido) {
-        return pedido.getQuantidades().stream().allMatch(q -> q <= 10);
+        return pedido.getItens().stream()
+                .allMatch(item -> item.getQuantidade() <= 10);
     }
 }
