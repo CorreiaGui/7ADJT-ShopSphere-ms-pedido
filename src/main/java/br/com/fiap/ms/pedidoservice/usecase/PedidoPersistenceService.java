@@ -1,8 +1,8 @@
 package br.com.fiap.ms.pedidoservice.usecase;
 
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
-import br.com.fiap.ms.pedidoservice.gateway.database.PedidoRepository;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 
 /**

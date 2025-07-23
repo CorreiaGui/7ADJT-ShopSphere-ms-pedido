@@ -1,6 +1,6 @@
-package br.com.fiap.ms.pedidoservice.controller.json;
+package br.com.fiap.ms.pedidoservice.controller;
 
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.entity.ProdutoResponse;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.service.ProdutoService;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
