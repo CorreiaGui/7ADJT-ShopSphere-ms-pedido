@@ -1,13 +1,9 @@
 package br.com.fiap.ms.pedidoservice.gateway.consumer;
 
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
-import br.com.fiap.ms.pedidoservice.usecase.ProcessarPedidoUseCase;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Consumidor de mensagens de pedidos.
