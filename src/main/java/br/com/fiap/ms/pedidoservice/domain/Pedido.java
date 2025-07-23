@@ -13,8 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Pedido {
     private String idCliente;
-    private List<String> skus;
-    private List<Integer> quantidades;
+    private List<ItemPedido> itens;
     private String numeroCartao;
     private Double valorTotal;
     private String status;

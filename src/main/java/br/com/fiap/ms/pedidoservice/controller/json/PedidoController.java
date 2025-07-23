@@ -1,6 +1,6 @@
 package br.com.fiap.ms.pedidoservice.controller.json;
 
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

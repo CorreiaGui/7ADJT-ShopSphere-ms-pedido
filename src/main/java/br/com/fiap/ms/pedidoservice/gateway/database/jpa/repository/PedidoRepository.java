@@ -1,6 +1,6 @@
-package br.com.fiap.ms.pedidoservice.gateway.database;
+package br.com.fiap.ms.pedidoservice.gateway.database.jpa.repository;
 
-import br.com.fiap.ms.pedidoservice.domain.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
