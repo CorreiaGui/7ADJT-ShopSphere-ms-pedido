@@ -12,6 +12,19 @@ services:
       - pedido_pgdata:/var/lib/postgresql/data
     restart: always
 
+  cliente-db:
+    image: postgres:17-alpine
+    container_name: cliente_db
+    restart: always
+    environment:
+      POSTGRES_DB: cliente_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 5431:5432
+    volumes:
+      - cliente_pgdata:/var/lib/postgresql/data
+
   estoque-db:
     image: postgres:17-alpine
     container_name: estoque_db
@@ -50,6 +63,21 @@ services:
       - 5436:5432
     volumes:
       - pagamento_pgdata:/var/lib/postgresql/data
+
+  cliente-service:
+    image: dsouzajm/ms-cliente:latest
+    container_name: cliente_service
+    depends_on:
+      - cliente-db
+    environment:
+      POSTGRES_HOST: cliente-db
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: cliente_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "8080:8080" # expõe porta do cliente (internamente 8080, externamente 8083)
+    restart: always
 
   produto-service:
     image: correiagui/produto-service:latest
@@ -115,8 +143,10 @@ services:
       - estoque-service
       - produto-service
       - pagamento-service
+      - cliente-service
     ports:
       - "8082:8080"
+      - "5005:5005"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://pedido-db:5432/pedido_db
       SPRING_DATASOURCE_USERNAME: postgres
@@ -127,9 +157,13 @@ services:
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
 
+      CLIENTE_URL: http://cliente-service:8080
       PRODUTO_URL: http://produto-service:8080
       ESTOQUE_URL: http://estoque-service:8080
       PAGAMENTO_URL: http://pagamento-service:8080
+      _JAVA_OPTIONS: >
+        -Xdebug 
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     restart: always
 
 volumes:
@@ -137,3 +171,4 @@ volumes:
   estoque_pgdata:
   produto_pgdata:
   pagamento_pgdata:
+  cliente_pgdata:

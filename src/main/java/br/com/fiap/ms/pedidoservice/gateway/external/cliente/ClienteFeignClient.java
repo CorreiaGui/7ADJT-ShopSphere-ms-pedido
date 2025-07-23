@@ -5,10 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
 
-@FeignClient(name = "clienteClient", url = "http://java-app:8080/api/v1/clientes", path = "/api/v1/clientes")
+@FeignClient(name = "clienteClient", url = "${CLIENTE_URL}", path = "/api/v1/clientes")
 public interface ClienteFeignClient {
 
     @GetMapping("/{cpf}")
     public ClienteJsonResponse buscarClientesPorCpf(@PathVariable("cpf") String cpf);
 }
-
