@@ -1,9 +1,12 @@
 package br.com.fiap.ms.pedidoservice.controller;
 
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.ClienteFeignClient;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.entity.ProdutoResponse;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.service.ProdutoService;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,15 +16,12 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/pedidos")
+@RequiredArgsConstructor
 public class PedidoController {
 
     private final PedidoPersistenceService service;
     private final ProdutoService produtoService;
-
-    public PedidoController(PedidoPersistenceService service, ProdutoService produtoService) {
-        this.service = service;
-        this.produtoService = produtoService;
-    }
+    private final ClienteFeignClient clienteFeignClient;
 
     @GetMapping("/produto/{sku}")
     public ResponseEntity<ProdutoResponse> buscarProduto(@PathVariable String sku) {

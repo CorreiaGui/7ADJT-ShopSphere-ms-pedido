@@ -11,4 +11,3 @@ public interface ClienteFeignClient {
     @GetMapping("/{cpf}")
     public ClienteJsonResponse buscarClientesPorCpf(@PathVariable("cpf") String cpf);
 }
-
