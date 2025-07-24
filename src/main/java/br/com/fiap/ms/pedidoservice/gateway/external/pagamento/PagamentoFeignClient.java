@@ -1,6 +1,6 @@
-package br.com.fiap.ms.pedidoservice.gateway.external.pagamento.client;
+package br.com.fiap.ms.pedidoservice.gateway.external.pagamento;
 
-import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.entity.PagamentoRequest;
+import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.request.PagamentoRequest;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

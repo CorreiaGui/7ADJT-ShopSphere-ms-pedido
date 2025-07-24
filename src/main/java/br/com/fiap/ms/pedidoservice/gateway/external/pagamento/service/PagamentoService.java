@@ -1,7 +1,7 @@
 package br.com.fiap.ms.pedidoservice.gateway.external.pagamento.service;
 
-import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.client.PagamentoFeignClient;
-import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.entity.PagamentoRequest;
+import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.PagamentoFeignClient;
+import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.request.PagamentoRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

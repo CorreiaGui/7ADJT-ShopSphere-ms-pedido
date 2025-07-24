@@ -6,14 +6,15 @@ import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.PedidoGateway;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
-import br.com.fiap.ms.pedidoservice.gateway.external.cliente.ClienteFeignClient;
 import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.service.ClienteService;
 import br.com.fiap.ms.pedidoservice.gateway.external.estoque.service.EstoqueService;
-import br.com.fiap.ms.pedidoservice.gateway.external.produto.entity.ProdutoResponse;
+import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.request.PagamentoRequest;
+import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.service.PagamentoService;
+import br.com.fiap.ms.pedidoservice.gateway.external.produto.response.ProdutoResponse;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.service.ProdutoService;
 import br.com.fiap.ms.pedidoservice.utils.PedidoUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,54 +26,39 @@ import static java.math.BigDecimal.ZERO;
 import static java.math.BigDecimal.valueOf;
 import static java.time.LocalDateTime.now;
 
-
 @Service
 @RequiredArgsConstructor
 public class CriarPedidoUseCase {
 
-    @Autowired
     private final PedidoGateway pedidoGateway;
-
-    @Autowired
     private final ProdutoService produtoService;
-
-    @Autowired
-    private final ClienteFeignClient clienteClient;
-
-    @Autowired
+    private final ClienteService clienteService;
     private final EstoqueService estoqueService;
-
+    private final PagamentoService pagamentoService;
 
     public PedidoEntity criarPedido(PedidoRequestJson pedidoRequestJson) {
-
-        //cliente
-        ClienteJsonResponse cliente = clienteClient.buscarClientesPorCpf(pedidoRequestJson.documentoCliente());
-
         List<ItemPedido> itens = new ArrayList<>();
-
         BigDecimal valorTotal = ZERO;
         int numeroPedido = gerarNumeroPedidoAleatorio();
 
         for (ItemPedidoRequestJson itemDTO : pedidoRequestJson.itens()) {
-
-            //produto
             ProdutoResponse produto = produtoService.buscarPorSku(itemDTO.sku());
 
-            //estoque
             estoqueService.baixarEstoque(itemDTO.sku(), itemDTO.quantidade());
 
-            BigDecimal subtotal = produto.getPreco().multiply(valueOf(itemDTO.quantidade()));
-
+            BigDecimal subtotal = produto.preco().multiply(valueOf(itemDTO.quantidade()));
             valorTotal = valorTotal.add(subtotal);
 
             ItemPedido item = ItemPedido.builder()
                     .sku(itemDTO.sku())
-                    .quantidade(Integer.valueOf(itemDTO.quantidade().toString()))
+                    .quantidade(Math.toIntExact(itemDTO.quantidade()))
                     .numeroPedido(numeroPedido)
                     .build();
 
             itens.add(item);
         }
+
+        ClienteJsonResponse cliente = clienteService.buscarClientesPorCpf(pedidoRequestJson.documentoCliente());
 
         Pedido pedido = Pedido.builder()
                 .itens(itens)
@@ -82,7 +68,25 @@ public class CriarPedidoUseCase {
                 .numeroPedido(numeroPedido)
                 .build();
 
-        return pedidoGateway.salvar(PedidoUtils.convertToPedidoEntity(pedido));
+        PagamentoRequest pagamentoRequest = PagamentoRequest.builder()
+                .pedidoId()
+                .valor(valorTotal)
+                .formaPagamento(pedidoRequestJson.formaPagamento())
+                .numeroCartaoCredito(pedidoRequestJson.numeroCartaoCredito())
+                .build();
+
+        try {
+            pagamentoService.criarPagamento(pagamentoRequest);
+            pedido.setPagamentoId();
+        } catch (Exception e) {
+            itens.forEach(item ->
+                    estoqueService.reporEstoque(item.getSku(), Long.valueOf(item.getQuantidade()))
+            );
+            throw new RuntimeException("Erro ao processar pagamento: " + e.getMessage(), e);
+        }
+
+        PedidoEntity entity = PedidoUtils.convertToPedidoEntity(pedido);
+        return pedidoGateway.salvar(entity);
     }
 
 }

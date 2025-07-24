@@ -30,4 +30,7 @@ public class Pedido {
     private LocalDateTime dataUltimaAlteracao;
 
     private List<ItemPedido> itens;
+
+    private UUID pagamentoId;
+
 }

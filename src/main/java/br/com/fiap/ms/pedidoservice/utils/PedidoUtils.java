@@ -18,6 +18,7 @@ public final class PedidoUtils {
                 .numeroPedido(e.getNumeroPedido())
                 .valorTotal(e.getValorTotal())
                 .cpf(e.getCpf())
+                .pagamentoId(e.getPagamentoId())
                 .dataCriacao(e.getDataCriacao())
                 .dataUltimaAlteracao(e.getDataUltimaAlteracao())
                 .itens(e.getItens() != null
@@ -34,6 +35,7 @@ public final class PedidoUtils {
                 .numeroPedido(e.getNumeroPedido())
                 .valorTotal(e.getValorTotal())
                 .cpf(e.getCpf())
+                .pagamentoId(e.getPagamentoId())
                 .dataCriacao(e.getDataCriacao())
                 .dataUltimaAlteracao(e.getDataUltimaAlteracao())
                 .itens(e.getItens() != null

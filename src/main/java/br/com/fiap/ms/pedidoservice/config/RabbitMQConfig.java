@@ -8,10 +8,6 @@ import org.springframework.amqp.support.converter.MessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Configuração do RabbitMQ para o serviço de pedidos.
- * Define a fila de pedidos e o conversor de mensagens para JSON.
- */
 @Configuration
 public class RabbitMQConfig {
 
