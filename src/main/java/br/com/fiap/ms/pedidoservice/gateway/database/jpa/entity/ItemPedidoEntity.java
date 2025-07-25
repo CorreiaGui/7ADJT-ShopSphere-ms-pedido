@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 public class ItemPedidoEntity {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @UuidGenerator
     private String id;
 

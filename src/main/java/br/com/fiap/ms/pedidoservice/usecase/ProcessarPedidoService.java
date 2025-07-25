@@ -54,7 +54,7 @@ public class ProcessarPedidoService implements ProcessarPedidoUseCase {
             pedido.setStatus("PRODUTO_INVALIDO");
             return;
         }
-
+        pedido.setValorTotal(123.45);
         boolean pagamentoAprovado = pagamentoClient.processarPagamento(pedido);
         boolean estoqueDisponivel = estoqueClient.verificarEstoque(pedido);
 
