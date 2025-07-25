@@ -34,5 +34,4 @@ public class RabbitMQConfig {
         factory.setMessageConverter(messageConverter);
         return factory;
     }
-
 }
