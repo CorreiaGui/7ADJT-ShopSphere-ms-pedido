@@ -76,7 +76,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "8080:8080" # expõe porta do cliente (internamente 8080, externamente 8083)
+      - "8080:8080" # expõe porta do cliente (internamente 8080, externamente 8080)
     restart: always
 
   produto-service:

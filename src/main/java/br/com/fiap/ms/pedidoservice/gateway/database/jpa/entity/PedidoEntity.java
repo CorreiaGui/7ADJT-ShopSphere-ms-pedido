@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
 @Getter
