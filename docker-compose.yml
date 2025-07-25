@@ -75,7 +75,7 @@ services:
     restart: always
 
   cliente-service:
-    image: dsouzajm/ms-cliente:latest
+    image: dsouzajm/ms-cliente:2.0.0
     container_name: cliente_service
     depends_on:
       - cliente-db
