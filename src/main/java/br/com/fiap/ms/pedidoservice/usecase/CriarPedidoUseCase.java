@@ -72,12 +72,11 @@ public class CriarPedidoUseCase {
                 .status(StatusPedido.ABERTO)
                 .build();
 
-        PagamentoRequest pagamentoRequest = PagamentoRequest.builder()
-                .pedidoId(pedido.getId())
-                .valor(valorTotal)
-                .formaPagamento(pedidoRequestJson.formaPagamento())
-                .numeroCartaoCredito(pedidoRequestJson.numeroCartaoCredito())
-                .build();
+        PagamentoRequest pagamentoRequest = new PagamentoRequest(
+                pedido.getId(),
+                pedidoRequestJson.formaPagamento(),
+                pedidoRequestJson.numeroCartaoCredito(),
+                valorTotal);
 
         try {
             String pagamentoId = pagamentoService.criarPagamento(pagamentoRequest);
