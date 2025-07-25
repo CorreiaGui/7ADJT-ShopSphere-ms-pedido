@@ -64,6 +64,16 @@ services:
     volumes:
       - pagamento_pgdata:/var/lib/postgresql/data
 
+  pedido-receiver-service:
+    image: dsouzajm/ms-pedido-receiver:1.0.0
+    container_name: pedido_receiver_service
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - "8085:8080" # expõe porta do cliente (internamente 8080, externamente 8080)
+    restart: always
+
   cliente-service:
     image: dsouzajm/ms-cliente:latest
     container_name: cliente_service
@@ -144,6 +154,7 @@ services:
       - produto-service
       - pagamento-service
       - cliente-service
+      - pedido-receiver-service
     ports:
       - "8082:8080"
       - "5005:5005"
