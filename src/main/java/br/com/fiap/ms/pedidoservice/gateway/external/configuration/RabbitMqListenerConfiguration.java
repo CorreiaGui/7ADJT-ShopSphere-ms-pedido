@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * Utiliza Jackson2JsonMessageConverter para serialização e desserialização de mensagens.
  */
 @Configuration
-public class RabbitMqListenerConfig {
+public class RabbitMqListenerConfiguration {
 
     @Bean
     public MessageConverter jsonMessageConverter() {
