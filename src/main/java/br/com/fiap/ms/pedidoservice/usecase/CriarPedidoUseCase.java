@@ -4,6 +4,7 @@ import br.com.fiap.ms.pedidoservice.controller.json.ItemPedidoRequestJson;
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoRequestJson;
 import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
+import br.com.fiap.ms.pedidoservice.domain.StatusPedido;
 import br.com.fiap.ms.pedidoservice.gateway.PedidoGateway;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import static br.com.fiap.ms.pedidoservice.utils.PedidoUtils.gerarNumeroPedidoAleatorio;
 import static java.math.BigDecimal.ZERO;
@@ -61,23 +63,25 @@ public class CriarPedidoUseCase {
         ClienteJsonResponse cliente = clienteService.buscarClientesPorCpf(pedidoRequestJson.documentoCliente());
 
         Pedido pedido = Pedido.builder()
+                .id(UUID.randomUUID())
                 .itens(itens)
                 .cpf(cliente.cpf())
                 .dataCriacao(now())
                 .valorTotal(valorTotal)
                 .numeroPedido(numeroPedido)
+                .status(StatusPedido.ABERTO)
                 .build();
 
         PagamentoRequest pagamentoRequest = PagamentoRequest.builder()
-                .pedidoId()
+                .pedidoId(pedido.getId())
                 .valor(valorTotal)
                 .formaPagamento(pedidoRequestJson.formaPagamento())
                 .numeroCartaoCredito(pedidoRequestJson.numeroCartaoCredito())
                 .build();
 
         try {
-            pagamentoService.criarPagamento(pagamentoRequest);
-            pedido.setPagamentoId();
+            String pagamentoId = pagamentoService.criarPagamento(pagamentoRequest);
+            pedido.setPagamentoId(UUID.fromString(pagamentoId.replace("\"", "")));
         } catch (Exception e) {
             itens.forEach(item ->
                     estoqueService.reporEstoque(item.getSku(), Long.valueOf(item.getQuantidade()))

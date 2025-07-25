@@ -33,4 +33,6 @@ public class Pedido {
 
     private UUID pagamentoId;
 
+    private StatusPedido status;
+
 }

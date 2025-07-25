@@ -1,5 +1,6 @@
 package br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity;
 
+import br.com.fiap.ms.pedidoservice.domain.StatusPedido;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -23,7 +24,6 @@ import static jakarta.persistence.GenerationType.AUTO;
 public class PedidoEntity {
 
     @Id
-    @GeneratedValue(strategy = AUTO)
     private UUID id;
 
     @Column(name = "numero_pedido", nullable = false, unique = true)
@@ -35,8 +35,9 @@ public class PedidoEntity {
     @Column(name = "cpf", nullable = false, length = 11)
     private String cpf;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private String status;
+    private StatusPedido status;
 
     @Column(name = "valor_total", nullable = false, precision = 10, scale = 2)
     private BigDecimal valorTotal;

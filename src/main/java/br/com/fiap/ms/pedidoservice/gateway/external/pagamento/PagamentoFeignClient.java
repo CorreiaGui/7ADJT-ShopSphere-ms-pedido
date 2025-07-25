@@ -8,5 +8,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "pagamentoClient", url = "${PAGAMENTO_URL}", path = "/api/v1/pagamentos")
 public interface PagamentoFeignClient {
     @PostMapping()
-    void criarPagamento(@RequestBody PagamentoRequest pagamentoRequest);
+    String criarPagamento(@RequestBody PagamentoRequest pagamentoRequest);
 }

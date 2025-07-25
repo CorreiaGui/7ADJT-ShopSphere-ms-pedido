@@ -12,7 +12,7 @@ public class PagamentoService implements IPagamentoService {
     private final PagamentoFeignClient pagamentoFeignClient;
 
     @Override
-    public void criarPagamento(PagamentoRequest pagamentoRequest) {
-        pagamentoFeignClient.criarPagamento(pagamentoRequest);
+    public String criarPagamento(PagamentoRequest pagamentoRequest) {
+        return pagamentoFeignClient.criarPagamento(pagamentoRequest);
     }
 }

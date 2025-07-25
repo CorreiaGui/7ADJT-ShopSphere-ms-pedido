@@ -1,5 +1,6 @@
 package br.com.fiap.ms.pedidoservice.utils;
 
+import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 
@@ -36,6 +37,7 @@ public final class PedidoUtils {
                 .valorTotal(e.getValorTotal())
                 .cpf(e.getCpf())
                 .pagamentoId(e.getPagamentoId())
+                .status(e.getStatus())
                 .dataCriacao(e.getDataCriacao())
                 .dataUltimaAlteracao(e.getDataUltimaAlteracao())
                 .itens(e.getItens() != null
@@ -44,6 +46,17 @@ public final class PedidoUtils {
                         .collect(toList())
                         : emptyList())
                 .build();
+    }
+
+    public static PedidoResponseJson convertToPedidoResponseJson(PedidoEntity e) {
+        return new PedidoResponseJson(
+                e.getId(),
+                e.getNumeroPedido(),
+                e.getCpf(),
+                e.getValorTotal(),
+                e.getPagamentoId(),
+                e.getDataCriacao()
+        );
     }
 
     public static int gerarNumeroPedidoAleatorio() {
