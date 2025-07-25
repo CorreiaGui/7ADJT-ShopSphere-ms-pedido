@@ -15,10 +15,13 @@ public class PedidoNumeroGenerator {
     private EntityManager entityManager;
 
     public Integer gerarNumeroPedido() {
-        Integer ultimoNumero = (Integer) entityManager
+        Number result = (Number) entityManager
                 .createQuery("SELECT MAX(p.numeroPedido) FROM PedidoEntity p")
                 .getSingleResult();
 
-        return (ultimoNumero == null) ? 1 : ultimoNumero + 1;
+        int proximoNumero = (result == null) ? 1 : result.intValue() + 1;
+
+        System.out.println("Próximo número de pedido gerado: " + proximoNumero);
+        return proximoNumero;
     }
 }

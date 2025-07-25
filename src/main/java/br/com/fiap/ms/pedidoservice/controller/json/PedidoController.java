@@ -1,7 +1,9 @@
 package br.com.fiap.ms.pedidoservice.controller.json;
 
+import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import br.com.fiap.ms.pedidoservice.usecase.PedidoPersistenceService;
+import br.com.fiap.ms.pedidoservice.usecase.ProcessarPedidoUseCase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +16,18 @@ import org.springframework.web.bind.annotation.*;
 public class PedidoController {
 
     private final PedidoPersistenceService service;
+    private final ProcessarPedidoUseCase processarPedidoUseCase;
 
-    public PedidoController(PedidoPersistenceService service) {
+    public PedidoController(PedidoPersistenceService service,
+                            ProcessarPedidoUseCase processarPedidoUseCase) {
         this.service = service;
+        this.processarPedidoUseCase = processarPedidoUseCase;
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> receberPedido(@RequestBody Pedido pedido) {
+        processarPedidoUseCase.processar(pedido);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")
