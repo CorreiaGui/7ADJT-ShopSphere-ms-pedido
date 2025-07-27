@@ -65,7 +65,7 @@ services:
       - pagamento_pgdata:/var/lib/postgresql/data
 
   pedido-receiver-service:
-    image: dsouzajm/ms-pedido-receiver:1.0.0
+    image: dsouzajm/ms-pedido-receiver:2.0.1
     container_name: pedido_receiver_service
     environment:
       RABBITMQ_DEFAULT_USER: guest
