@@ -1,11 +1,18 @@
 package br.com.fiap.ms.pedidoservice.utils;
 
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
+import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
 
+import java.math.BigDecimal;
+import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
+import static br.com.fiap.ms.pedidoservice.domain.StatusPedido.ABERTO;
+import static java.time.LocalDateTime.now;
 import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
@@ -57,6 +64,18 @@ public final class PedidoUtils {
                 e.getPagamentoId(),
                 e.getDataCriacao()
         );
+    }
+
+    public static Pedido buildPedido(List<ItemPedido> itens, ClienteJsonResponse cliente, BigDecimal valorTotal, int numeroPedido) {
+        return Pedido.builder()
+                .id(UUID.randomUUID())
+                .itens(itens)
+                .cpf(cliente.cpf())
+                .dataCriacao(now())
+                .valorTotal(valorTotal)
+                .numeroPedido(numeroPedido)
+                .status(ABERTO)
+                .build();
     }
 
     public static int gerarNumeroPedidoAleatorio() {
