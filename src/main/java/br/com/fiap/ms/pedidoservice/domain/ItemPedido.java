@@ -1,6 +1,5 @@
 package br.com.fiap.ms.pedidoservice.domain;
 
-import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,5 +26,4 @@ public class ItemPedido {
 
     private LocalDateTime dataUltimaAlteracao;
 
-    private PedidoEntity pedido;
 }
