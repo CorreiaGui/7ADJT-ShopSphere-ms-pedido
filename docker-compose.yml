@@ -154,7 +154,7 @@ services:
     container_name: pedido_service
     depends_on:
       rabbitmq:
-        condition: service_healthy
+        condition: service_started
       pedido-db:
         condition: service_started
       estoque-service:
@@ -184,6 +184,7 @@ services:
       PRODUTO_URL: http://produto-service:8080
       ESTOQUE_URL: http://estoque-service:8080
       PAGAMENTO_URL: http://pagamento-service:8080
+      PAGAMENTO_EXTERNO_URL: http://pagamento-externo-service:8080
 
       _JAVA_OPTIONS: >
         -Xdebug 
