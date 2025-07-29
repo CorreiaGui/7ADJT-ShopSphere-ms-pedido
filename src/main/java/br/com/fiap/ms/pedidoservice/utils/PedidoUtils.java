@@ -56,14 +56,21 @@ public final class PedidoUtils {
     }
 
     public static PedidoResponseJson convertToPedidoResponseJson(PedidoEntity e) {
-        return new PedidoResponseJson(
-                e.getId(),
-                e.getNumeroPedido(),
-                e.getCpf(),
-                e.getValorTotal(),
-                e.getPagamentoId(),
-                e.getDataCriacao()
-        );
+        return PedidoResponseJson.builder()
+                .id(e.getId())
+                .numeroPedido(e.getNumeroPedido())
+                .documentoCliente(e.getCpf())
+                .valorTotal(e.getValorTotal())
+                .pagamentoId(e.getPagamentoId())
+                .dataCriacao(e.getDataCriacao())
+                .dataUltimaAlteracao(e.getDataUltimaAlteracao())
+                .status(e.getStatus())
+                .itens(e.getItens() != null
+                        ? e.getItens().stream()
+                        .map(ItemPedidoUtils::convertToItemPedidoResponseJson)
+                        .collect(toList())
+                        : emptyList())
+                .build();
     }
 
     public static Pedido buildPedido(List<ItemPedido> itens, ClienteJsonResponse cliente, BigDecimal valorTotal, int numeroPedido) {

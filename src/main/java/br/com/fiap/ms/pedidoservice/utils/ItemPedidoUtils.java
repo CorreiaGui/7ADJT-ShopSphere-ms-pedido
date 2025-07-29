@@ -1,6 +1,7 @@
 package br.com.fiap.ms.pedidoservice.utils;
 
 import br.com.fiap.ms.pedidoservice.controller.json.ItemPedidoRequestJson;
+import br.com.fiap.ms.pedidoservice.controller.json.ItemPedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.ItemPedidoEntity;
 
@@ -35,6 +36,13 @@ public final class ItemPedidoUtils {
                 .sku(itemDTO.sku())
                 .quantidade(toIntExact(itemDTO.quantidade()))
                 .numeroPedido(numeroPedido)
+                .build();
+    }
+
+    public static ItemPedidoResponseJson convertToItemPedidoResponseJson(ItemPedidoEntity e) {
+        return ItemPedidoResponseJson.builder()
+                .sku(e.getSku())
+                .quantidade(e.getQuantidade())
                 .build();
     }
 }
