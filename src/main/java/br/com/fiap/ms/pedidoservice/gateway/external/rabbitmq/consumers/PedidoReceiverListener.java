@@ -1,7 +1,9 @@
 package br.com.fiap.ms.pedidoservice.gateway.external.rabbitmq.consumers;
 
-import lombok.RequiredArgsConstructor;
+import br.com.fiap.ms.pedidoservice.controller.json.PedidoRequestJson;
+import br.com.fiap.ms.pedidoservice.usecase.CriarPedidoUseCase;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,11 +11,13 @@ import org.springframework.stereotype.Component;
  * Processa os pedidos recebidos utilizando o caso de uso PedidoReceiverUseCase.
  */
 @Component
-@RequiredArgsConstructor
 public class PedidoReceiverListener {
 
+    @Autowired
+    private CriarPedidoUseCase usecase;
+
     @RabbitListener(queues = "novo-pedido-queue")
-    public void receberPedido() {
-        System.out.println("Pedido recebido: ");
+    public void receberPedido(PedidoRequestJson json) {
+        usecase.criarPedido(json);
     }
 }

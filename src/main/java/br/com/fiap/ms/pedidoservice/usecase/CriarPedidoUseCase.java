@@ -13,7 +13,6 @@ import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.request.Pagamento
 import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.service.PagamentoService;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.response.ProdutoResponse;
 import br.com.fiap.ms.pedidoservice.gateway.external.produto.service.ProdutoService;
-import br.com.fiap.ms.pedidoservice.utils.PagamentoUtils;
 import br.com.fiap.ms.pedidoservice.utils.PedidoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
