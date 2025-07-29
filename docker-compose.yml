@@ -15,15 +15,15 @@ services:
   cliente-db:
     image: postgres:17-alpine
     container_name: cliente_db
-    restart: always
     environment:
       POSTGRES_DB: cliente_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - 5431:5432
+      - "5431:5432"
     volumes:
       - cliente_pgdata:/var/lib/postgresql/data
+    restart: always
 
   estoque-db:
     image: postgres:17-alpine
@@ -54,24 +54,40 @@ services:
   pagamento-db:
     image: postgres:17-alpine
     container_name: pagamento_db
-    restart: always
     environment:
       POSTGRES_DB: pagamento_db
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - 5436:5432
+      - "5436:5432"
     volumes:
       - pagamento_pgdata:/var/lib/postgresql/data
+    restart: always
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq_pedido
+    ports:
+      - "5673:5672"      # Porta AMQP (interna 5672)
+      - "15673:15672"    # UI Web do RabbitMQ
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
 
   pedido-receiver-service:
-    image: dsouzajm/ms-pedido-receiver:2.0.1
+    image: larissahsilva/ms-receiver:latest
     container_name: pedido_receiver_service
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "8085:8080" # expõe porta do cliente (internamente 8080, externamente 8080)
+      - "8085:8080"
     restart: always
 
   cliente-service:
@@ -86,7 +102,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "8080:8080" # expõe porta do cliente (internamente 8080, externamente 8080)
+      - "8080:8080"
     restart: always
 
   produto-service:
@@ -114,7 +130,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "8083:8080" # expõe porta do estoque (internamente 8080, externamente 8083)
+      - "8083:8080"
     restart: always
 
   pagamento-service:
@@ -129,18 +145,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "8084:8080" # expõe porta do pagamento (internamente 8080, externamente 8084)
-    restart: always
-
-  rabbitmq:
-    image: rabbitmq:3-management
-    container_name: rabbitmq_pedido
-    ports:
-      - "5673:5672"          # Porta AMQP ajustada para evitar conflito
-      - "15673:15672"        # Painel web também ajustado
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      - "8084:8080"
     restart: always
 
   pedido-service:
@@ -148,13 +153,20 @@ services:
       context: .
     container_name: pedido_service
     depends_on:
-      - pedido-db
-      - rabbitmq
-      - estoque-service
-      - produto-service
-      - pagamento-service
-      - cliente-service
-      - pedido-receiver-service
+      rabbitmq:
+        condition: service_healthy
+      pedido-db:
+        condition: service_started
+      estoque-service:
+        condition: service_started
+      produto-service:
+        condition: service_started
+      pagamento-service:
+        condition: service_started
+      cliente-service:
+        condition: service_started
+      pedido-receiver-service:
+        condition: service_started
     ports:
       - "8082:8080"
       - "5005:5005"
@@ -172,6 +184,7 @@ services:
       PRODUTO_URL: http://produto-service:8080
       ESTOQUE_URL: http://estoque-service:8080
       PAGAMENTO_URL: http://pagamento-service:8080
+
       _JAVA_OPTIONS: >
         -Xdebug 
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
