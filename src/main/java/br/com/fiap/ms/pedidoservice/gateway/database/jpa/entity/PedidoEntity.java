@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static jakarta.persistence.CascadeType.ALL;
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Getter
@@ -34,7 +35,7 @@ public class PedidoEntity {
     @Column(name = "cpf", nullable = false, length = 11)
     private String cpf;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
     @Column(name = "status", nullable = false)
     private StatusPedido status;
 

@@ -1,7 +1,6 @@
 package br.com.fiap.ms.pedidoservice.gateway.database.jpa;
 
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
-import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.gateway.PedidoGateway;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.repository.PedidoRepository;
@@ -9,13 +8,11 @@ import br.com.fiap.ms.pedidoservice.utils.PedidoUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 

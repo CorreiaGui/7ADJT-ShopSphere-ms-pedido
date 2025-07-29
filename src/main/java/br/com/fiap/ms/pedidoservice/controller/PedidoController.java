@@ -1,10 +1,10 @@
 package br.com.fiap.ms.pedidoservice.controller;
 
-import br.com.fiap.ms.pedidoservice.controller.json.PedidoRequestJson;
+import br.com.fiap.ms.pedidoservice.controller.json.AtualizarStatusRequestJson;
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
+import br.com.fiap.ms.pedidoservice.usecase.AtualizarStatusPedidoUseCase;
 import br.com.fiap.ms.pedidoservice.usecase.BuscarPedidoUseCase;
 import br.com.fiap.ms.pedidoservice.usecase.BuscarPedidosUseCase;
-import br.com.fiap.ms.pedidoservice.utils.PedidoUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,9 @@ public class PedidoController {
     @Autowired
     private BuscarPedidoUseCase buscarPedido;
 
+    @Autowired
+    private AtualizarStatusPedidoUseCase atualizar;
+
     @GetMapping
     public ResponseEntity<List<PedidoResponseJson>> buscarPedidos(@RequestParam(value = "page", defaultValue = "0") int page,
                                                                   @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -48,10 +51,10 @@ public class PedidoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> atualizarPedido(@PathVariable("id") UUID id, @RequestBody PedidoRequestJson request) {
-        logger.info("PUT | {} | Iniciado updateMenu | id: {}", V1_MENU, id);
-        menuService.updateMenu(convertToMenu(menuBodyRequest), id);
-        logger.info("PUT | {} | Finalizado updateMenu", V1_MENU);
-        return ok("Menu atualizado com sucesso");
+    public ResponseEntity<String> atualizarPedido(@PathVariable("id") UUID id, @RequestBody AtualizarStatusRequestJson request) {
+        log.info("PUT | {} | Iniciado atualização de status do Pedido | id: {}", V1_PEDIDOS, id);
+        atualizar.atualizarPedido(request, id);
+        log.info("PUT | {} | Status do Pedido atualizado com sucesso", V1_PEDIDOS);
+        return ok("Status do Pedido atualizado com sucesso status: " + request.status());
     }
 }

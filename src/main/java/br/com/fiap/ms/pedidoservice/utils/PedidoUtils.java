@@ -89,5 +89,9 @@ public final class PedidoUtils {
         return new Random().nextInt(900_000) + 100_000; // 6 dígitos
     }
 
-
+    public static void checkNotNull(Object obj, String errorMessage) {
+        if(obj == null){
+            throw new RuntimeException(errorMessage);
+        }
+    }
 }

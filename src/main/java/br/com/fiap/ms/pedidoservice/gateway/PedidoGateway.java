@@ -1,5 +1,6 @@
 package br.com.fiap.ms.pedidoservice.gateway;
 
+import br.com.fiap.ms.pedidoservice.controller.json.PedidoRequestJson;
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
 
