@@ -25,7 +25,6 @@ public class PagamentoExternoService implements IPagamentoExternoService {
         int index = random.nextInt(STATUS_PAGAMENTO.length);
         return STATUS_PAGAMENTO[index];
 
-        //return pagamentoFeignClient.criarPagamento(pagamentoRequest);
     }
 
 }

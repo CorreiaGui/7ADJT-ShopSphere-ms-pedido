@@ -14,8 +14,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import static br.com.fiap.ms.pedidoservice.utils.PedidoUtils.*;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 
 class PedidoUtilsTest {
 
@@ -135,7 +136,7 @@ class PedidoUtilsTest {
                 .dataCriacao(now)
                 .build();
 
-        PedidoResponseJson responseJson = PedidoUtils.convertToPedidoResponseJson(entity);
+        PedidoResponseJson responseJson = convertToPedidoResponseJson(entity);
 
         assertNotNull(responseJson);
         assertEquals(entity.getId(), responseJson.id());
@@ -148,9 +149,31 @@ class PedidoUtilsTest {
 
     @Test
     void gerarNumeroPedidoAleatorio_deveGerarNumeroCom6Digitos() {
-        int numero = PedidoUtils.gerarNumeroPedidoAleatorio();
+        int numero = gerarNumeroPedidoAleatorio();
 
         assertTrue(numero >= 100_000 && numero <= 999_999,
                 "Número gerado deve ter 6 dígitos e estar entre 100000 e 999999");
+    }
+
+    @Test
+    void gerarNumeroPedidoAleatorio_shouldGenerateNumberBetween100000And999999() {
+        for (int i = 0; i < 100; i++) {
+            int numero = gerarNumeroPedidoAleatorio();
+            assertTrue(numero >= 100_000 && numero <= 999_999,
+                    "Número deve estar entre 100000 e 999999");
+        }
+    }
+
+    @Test
+    void checkNotNull_shouldThrowExceptionWhenNull() {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            checkNotNull(null, "Objeto é nulo");
+        });
+        assertEquals("Objeto é nulo", exception.getMessage());
+    }
+
+    @Test
+    void checkNotNull_shouldNotThrowWhenNotNull() {
+        assertDoesNotThrow(() -> checkNotNull(new Object(), "Não deve lançar"));
     }
 }
