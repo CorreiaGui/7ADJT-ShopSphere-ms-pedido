@@ -7,6 +7,7 @@ import br.com.fiap.ms.pedidoservice.gateway.external.pagamento.request.Pagamento
 import java.math.BigDecimal;
 
 public final class PagamentoUtils {
+
     private  PagamentoUtils(){}
 
     public static PagamentoRequest buildPagamento(PedidoRequestJson pedidoRequestJson, Pedido pedido, BigDecimal valorTotal) {

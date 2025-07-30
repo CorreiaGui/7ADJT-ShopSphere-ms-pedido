@@ -9,6 +9,8 @@ import static java.lang.Math.toIntExact;
 
 public final class ItemPedidoUtils {
 
+    private ItemPedidoUtils(){}
+
     public static ItemPedido convertToItemPedido(ItemPedidoEntity entity) {
         return ItemPedido.builder()
                 .id(entity.getId())
