@@ -5,6 +5,7 @@ import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.usecase.AtualizarStatusPedidoUseCase;
 import br.com.fiap.ms.pedidoservice.usecase.BuscarPedidoUseCase;
 import br.com.fiap.ms.pedidoservice.usecase.BuscarPedidosUseCase;
+import br.com.fiap.ms.pedidoservice.usecase.ExcluirPedidoUseCase;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,8 @@ import java.util.UUID;
 
 import static br.com.fiap.ms.pedidoservice.utils.PedidoConstants.PRODUCES;
 import static br.com.fiap.ms.pedidoservice.utils.PedidoConstants.V1_PEDIDOS;
-import static org.springframework.http.ResponseEntity.ok;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.ResponseEntity.*;
 
 @Slf4j
 @RestController
@@ -32,6 +34,9 @@ public class PedidoController {
 
     @Autowired
     private AtualizarStatusPedidoUseCase atualizar;
+
+    @Autowired
+    private ExcluirPedidoUseCase excluir;
 
     @GetMapping
     public ResponseEntity<List<PedidoResponseJson>> buscarPedidos(@RequestParam(value = "page", defaultValue = "0") int page,
@@ -56,5 +61,18 @@ public class PedidoController {
         atualizar.atualizarPedido(request, id);
         log.info("PUT | {} | Status do Pedido atualizado com sucesso", V1_PEDIDOS);
         return ok("Status do Pedido atualizado com sucesso status: " + request.status());
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> excluirPedido(@PathVariable("id") UUID id) {
+        log.info("DELETE | {} | Iniciado exclusão de pedido | id: {}", V1_PEDIDOS, id);
+        try {
+            excluir.excluirPedido(id);
+            log.info("DELETE | {} | Pedido deletado com sucesso | Id: {}", V1_PEDIDOS, id);
+            return noContent().build();
+        } catch (RuntimeException e) {
+            log.error("DELETE | {} | Erro ao deletar Pedido | Id: {} | Erro: {}", V1_PEDIDOS, id, e.getMessage());
+            return status(NOT_FOUND).body("Pedido não encontrado");
+        }
     }
 }

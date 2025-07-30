@@ -46,6 +46,11 @@ public class PedidoJpaGateway implements PedidoGateway {
     }
 
     @Override
+    public void excluirPedido(UUID id) {
+        pedidoRepository.deleteById(id);
+    }
+
+    @Override
     public PedidoEntity buscarPorNumeroPedido(Integer numeroPedido) {
         return pedidoRepository.findByNumeroPedido(numeroPedido).orElse(null);
     }
