@@ -1,20 +1,24 @@
 package br.com.fiap.ms.pedidoservice.utils;
 
+import br.com.fiap.ms.pedidoservice.controller.json.ItemPedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
 import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
 import br.com.fiap.ms.pedidoservice.domain.Pedido;
 import br.com.fiap.ms.pedidoservice.domain.StatusPedido;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.ItemPedidoEntity;
 import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 import static br.com.fiap.ms.pedidoservice.utils.PedidoUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
@@ -176,4 +180,71 @@ class PedidoUtilsTest {
     void checkNotNull_shouldNotThrowWhenNotNull() {
         assertDoesNotThrow(() -> checkNotNull(new Object(), "Não deve lançar"));
     }
+
+    @Test
+    void deveConstruirPedidoComBuildPedido() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime agora = LocalDateTime.now();
+
+        ItemPedido item = ItemPedido.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(123)
+                .sku("PROD-01")
+                .quantidade(2)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .build();
+
+            ClienteJsonResponse cliente = new ClienteJsonResponse("12345678900", "nome", LocalDate.now(), LocalDateTime.now(), null, null);
+
+        Pedido pedido = buildPedido(List.of(item), cliente, new BigDecimal("99.90"), 123456);
+
+        assertThat(pedido).isNotNull();
+        assertThat(pedido.getCpf()).isEqualTo("12345678900");
+        assertThat(pedido.getItens()).hasSize(1);
+        assertThat(pedido.getValorTotal()).isEqualByComparingTo("99.90");
+        assertThat(pedido.getNumeroPedido()).isEqualTo(123456);
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.ABERTO);
+    }
+
+    @Test
+    void deveConverterPedidoEntityParaResponseJson() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime agora = LocalDateTime.now();
+
+        ItemPedidoEntity item = ItemPedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(987)
+                .sku("PROD-99")
+                .quantidade(3)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .build();
+
+        PedidoEntity entity = PedidoEntity.builder()
+                .id(id)
+                .numeroPedido(987)
+                .cpf("00011122233")
+                .valorTotal(new BigDecimal("123.45"))
+                .pagamentoId(UUID.randomUUID())
+                .status(StatusPedido.FECHADO_COM_SUCESSO)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .itens(List.of(item))
+                .build();
+
+        PedidoResponseJson response = convertToPedidoResponseJson(entity);
+
+        assertThat(response).isNotNull();
+        assertThat(response.id()).isEqualTo(id);
+        assertThat(response.numeroPedido()).isEqualTo(987);
+        assertThat(response.documentoCliente()).isEqualTo("00011122233");
+        assertThat(response.valorTotal()).isEqualByComparingTo("123.45");
+        assertThat(response.status()).isEqualTo(StatusPedido.FECHADO_COM_SUCESSO);
+        assertThat(response.itens()).hasSize(1);
+        ItemPedidoResponseJson itemResponse = response.itens().get(0);
+        assertThat(itemResponse.sku()).isEqualTo("PROD-99");
+        assertThat(itemResponse.quantidade()).isEqualTo(3);
+    }
+
 }
