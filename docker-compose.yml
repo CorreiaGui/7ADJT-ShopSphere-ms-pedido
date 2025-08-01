@@ -4,8 +4,8 @@ services:
     container_name: pedido_db
     environment:
       POSTGRES_DB: pedido_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5433:5432"
     volumes:
@@ -17,8 +17,8 @@ services:
     container_name: cliente_db
     environment:
       POSTGRES_DB: cliente_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5431:5432"
     volumes:
@@ -30,8 +30,8 @@ services:
     container_name: estoque_db
     environment:
       POSTGRES_DB: estoque_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5434:5432"
     volumes:
@@ -43,8 +43,8 @@ services:
     container_name: produto_db
     environment:
       POSTGRES_DB: tech_challenge
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 123456
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD_PRODUTO}
     ports:
       - "5435:5432"
     volumes:
@@ -56,8 +56,8 @@ services:
     container_name: pagamento_db
     environment:
       POSTGRES_DB: pagamento_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5436:5432"
     volumes:
@@ -71,8 +71,8 @@ services:
       - "5673:5672"      # Porta AMQP (interna 5672)
       - "15673:15672"    # UI Web do RabbitMQ
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     healthcheck:
       test: ["CMD", "rabbitmq-diagnostics", "ping"]
       interval: 10s
@@ -84,8 +84,8 @@ services:
     image: larissahsilva/ms-receiver:latest
     container_name: pedido_receiver_service
     environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
     ports:
       - "8085:8080"
     restart: always
@@ -99,8 +99,8 @@ services:
       POSTGRES_HOST: cliente-db
       POSTGRES_PORT: 5432
       POSTGRES_DB: cliente_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8080:8080"
     restart: always
@@ -112,8 +112,8 @@ services:
       - produto-db
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://produto-db:5432/tech_challenge
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD_PRODUTO}
     ports:
       - "8081:8080"
     restart: always
@@ -127,8 +127,8 @@ services:
       POSTGRES_HOST: estoque-db
       POSTGRES_PORT: 5432
       POSTGRES_DB: estoque_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8083:8080"
     restart: always
@@ -142,8 +142,8 @@ services:
       POSTGRES_HOST: pagamento-db
       POSTGRES_PORT: 5432
       POSTGRES_DB: pagamento_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "8084:8080"
     restart: always
@@ -172,13 +172,13 @@ services:
       - "5005:5005"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://pedido-db:5432/pedido_db
-      SPRING_DATASOURCE_USERNAME: postgres
-      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
 
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
-      SPRING_RABBITMQ_USERNAME: guest
-      SPRING_RABBITMQ_PASSWORD: guest
+      SPRING_RABBITMQ_USERNAME: ${RABBITMQ_USER}
+      SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_PASS}
 
       CLIENTE_URL: http://cliente-service:8080
       PRODUTO_URL: http://produto-service:8080

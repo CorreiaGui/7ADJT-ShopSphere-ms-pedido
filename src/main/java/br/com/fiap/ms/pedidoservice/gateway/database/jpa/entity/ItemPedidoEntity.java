@@ -12,7 +12,6 @@ import static jakarta.persistence.GenerationType.AUTO;
 
 @Entity
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

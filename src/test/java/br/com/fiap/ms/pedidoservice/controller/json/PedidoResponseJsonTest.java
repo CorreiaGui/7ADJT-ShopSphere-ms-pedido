@@ -78,9 +78,9 @@ class PedidoResponseJsonTest {
 
         // when
         String resultadoToString = response.toString();
-        System.out.println(response);
         // then
         assertNotNull(resultadoToString);
         assertTrue(resultadoToString.contains("12345678901"));
+        assertTrue(response.status().toString().equals(StatusPedido.FECHADO_COM_SUCESSO.toString()));
     }
 }
