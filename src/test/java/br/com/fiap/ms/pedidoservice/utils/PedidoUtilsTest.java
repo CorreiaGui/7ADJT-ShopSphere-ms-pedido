@@ -1,0 +1,250 @@
+package br.com.fiap.ms.pedidoservice.utils;
+
+import br.com.fiap.ms.pedidoservice.controller.json.ItemPedidoResponseJson;
+import br.com.fiap.ms.pedidoservice.controller.json.PedidoResponseJson;
+import br.com.fiap.ms.pedidoservice.domain.ItemPedido;
+import br.com.fiap.ms.pedidoservice.domain.Pedido;
+import br.com.fiap.ms.pedidoservice.domain.StatusPedido;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.ItemPedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.database.jpa.entity.PedidoEntity;
+import br.com.fiap.ms.pedidoservice.gateway.external.cliente.response.ClienteJsonResponse;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import static br.com.fiap.ms.pedidoservice.utils.PedidoUtils.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
+
+class PedidoUtilsTest {
+
+    @Test
+    void convertToPedido_deveConverterComItens() {
+        ItemPedidoEntity itemEntity = ItemPedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        PedidoEntity pedidoEntity = PedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(123456)
+                .valorTotal(BigDecimal.valueOf(100.0))
+                .cpf("12345678900")
+                .pagamentoId(UUID.randomUUID())
+                .dataCriacao(LocalDateTime.now())
+                .dataUltimaAlteracao(LocalDateTime.now())
+                .itens(List.of(itemEntity))
+                .build();
+
+        ItemPedido itemPedidoMock = ItemPedido.builder().id(UUID.randomUUID()).build();
+
+        try (MockedStatic<ItemPedidoUtils> mockedStatic = mockStatic(ItemPedidoUtils.class)) {
+            mockedStatic.when(() -> ItemPedidoUtils.convertToItemPedido(itemEntity)).thenReturn(itemPedidoMock);
+
+            Pedido pedido = PedidoUtils.convertToPedido(pedidoEntity);
+
+            assertNotNull(pedido);
+            assertEquals(pedidoEntity.getId(), pedido.getId());
+            assertEquals(pedidoEntity.getNumeroPedido(), pedido.getNumeroPedido());
+            assertEquals(pedidoEntity.getValorTotal(), pedido.getValorTotal());
+            assertEquals(pedidoEntity.getCpf(), pedido.getCpf());
+            assertEquals(pedidoEntity.getPagamentoId(), pedido.getPagamentoId());
+            assertEquals(1, pedido.getItens().size());
+            assertEquals(itemPedidoMock, pedido.getItens().get(0));
+
+            mockedStatic.verify(() -> ItemPedidoUtils.convertToItemPedido(itemEntity));
+        }
+    }
+
+    @Test
+    void convertToPedido_deveConverterComListaItensNula() {
+        PedidoEntity pedidoEntity = PedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .itens(null)
+                .build();
+
+        Pedido pedido = PedidoUtils.convertToPedido(pedidoEntity);
+
+        assertNotNull(pedido);
+        assertNotNull(pedido.getItens());
+        assertTrue(pedido.getItens().isEmpty());
+    }
+
+    @Test
+    void convertToPedidoEntity_deveConverterComItens() {
+        ItemPedido itemPedido = ItemPedido.builder()
+                .id(UUID.randomUUID())
+                .build();
+
+        Pedido pedido = Pedido.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(123456)
+                .valorTotal(BigDecimal.valueOf(100.0))
+                .cpf("12345678900")
+                .pagamentoId(UUID.randomUUID())
+                .status(StatusPedido.ABERTO)
+                .dataCriacao(LocalDateTime.now())
+                .dataUltimaAlteracao(LocalDateTime.now())
+                .itens(List.of(itemPedido))
+                .build();
+
+        ItemPedidoEntity itemEntityMock = ItemPedidoEntity.builder().id(UUID.randomUUID()).build();
+
+        try (MockedStatic<ItemPedidoUtils> mockedStatic = mockStatic(ItemPedidoUtils.class)) {
+            mockedStatic.when(() -> ItemPedidoUtils.convertToItemPedidoEntity(itemPedido)).thenReturn(itemEntityMock);
+
+            PedidoEntity entity = PedidoUtils.convertToPedidoEntity(pedido);
+
+            assertNotNull(entity);
+            assertEquals(pedido.getId(), entity.getId());
+            assertEquals(pedido.getNumeroPedido(), entity.getNumeroPedido());
+            assertEquals(pedido.getValorTotal(), entity.getValorTotal());
+            assertEquals(pedido.getCpf(), entity.getCpf());
+            assertEquals(pedido.getPagamentoId(), entity.getPagamentoId());
+            assertEquals(pedido.getStatus(), entity.getStatus());
+            assertEquals(1, entity.getItens().size());
+            assertEquals(itemEntityMock, entity.getItens().get(0));
+
+            mockedStatic.verify(() -> ItemPedidoUtils.convertToItemPedidoEntity(itemPedido));
+        }
+    }
+
+    @Test
+    void convertToPedidoEntity_deveConverterComListaItensNula() {
+        Pedido pedido = Pedido.builder()
+                .id(UUID.randomUUID())
+                .itens(null)
+                .build();
+
+        PedidoEntity entity = PedidoUtils.convertToPedidoEntity(pedido);
+
+        assertNotNull(entity);
+        assertNotNull(entity.getItens());
+        assertTrue(entity.getItens().isEmpty());
+    }
+
+    @Test
+    void convertToPedidoResponseJson_deveConverterCorretamente() {
+        LocalDateTime now = LocalDateTime.now();
+        PedidoEntity entity = PedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(123456)
+                .cpf("12345678900")
+                .valorTotal(BigDecimal.valueOf(100.0))
+                .pagamentoId(UUID.randomUUID())
+                .dataCriacao(now)
+                .build();
+
+        PedidoResponseJson responseJson = convertToPedidoResponseJson(entity);
+
+        assertNotNull(responseJson);
+        assertEquals(entity.getId(), responseJson.id());
+        assertEquals(entity.getNumeroPedido(), responseJson.numeroPedido());
+        assertEquals(entity.getCpf(), responseJson.documentoCliente());
+        assertEquals(entity.getValorTotal(), responseJson.valorTotal());
+        assertEquals(entity.getPagamentoId(), responseJson.pagamentoId());
+        assertEquals(entity.getDataCriacao(), responseJson.dataCriacao());
+    }
+
+    @Test
+    void gerarNumeroPedidoAleatorio_deveGerarNumeroCom6Digitos() {
+        int numero = gerarNumeroPedidoAleatorio();
+
+        assertTrue(numero >= 100_000 && numero <= 999_999,
+                "Número gerado deve ter 6 dígitos e estar entre 100000 e 999999");
+    }
+
+    @Test
+    void gerarNumeroPedidoAleatorio_shouldGenerateNumberBetween100000And999999() {
+        for (int i = 0; i < 100; i++) {
+            int numero = gerarNumeroPedidoAleatorio();
+            assertTrue(numero >= 100_000 && numero <= 999_999,
+                    "Número deve estar entre 100000 e 999999");
+        }
+    }
+
+    @Test
+    void checkNotNull_shouldThrowExceptionWhenNull() {
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            checkNotNull(null, "Objeto é nulo");
+        });
+        assertEquals("Objeto é nulo", exception.getMessage());
+    }
+
+    @Test
+    void checkNotNull_shouldNotThrowWhenNotNull() {
+        assertDoesNotThrow(() -> checkNotNull(new Object(), "Não deve lançar"));
+    }
+
+    @Test
+    void deveConstruirPedidoComBuildPedido() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime agora = LocalDateTime.now();
+
+        ItemPedido item = ItemPedido.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(123)
+                .sku("PROD-01")
+                .quantidade(2)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .build();
+
+            ClienteJsonResponse cliente = new ClienteJsonResponse("12345678900", "nome", LocalDate.now(), LocalDateTime.now(), null, null);
+
+        Pedido pedido = buildPedido(List.of(item), cliente, new BigDecimal("99.90"), 123456);
+
+        assertThat(pedido).isNotNull();
+        assertThat(pedido.getCpf()).isEqualTo("12345678900");
+        assertThat(pedido.getItens()).hasSize(1);
+        assertThat(pedido.getValorTotal()).isEqualByComparingTo("99.90");
+        assertThat(pedido.getNumeroPedido()).isEqualTo(123456);
+        assertThat(pedido.getStatus()).isEqualTo(StatusPedido.ABERTO);
+    }
+
+    @Test
+    void deveConverterPedidoEntityParaResponseJson() {
+        UUID id = UUID.randomUUID();
+        LocalDateTime agora = LocalDateTime.now();
+
+        ItemPedidoEntity item = ItemPedidoEntity.builder()
+                .id(UUID.randomUUID())
+                .numeroPedido(987)
+                .sku("PROD-99")
+                .quantidade(3)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .build();
+
+        PedidoEntity entity = PedidoEntity.builder()
+                .id(id)
+                .numeroPedido(987)
+                .cpf("00011122233")
+                .valorTotal(new BigDecimal("123.45"))
+                .pagamentoId(UUID.randomUUID())
+                .status(StatusPedido.FECHADO_COM_SUCESSO)
+                .dataCriacao(agora)
+                .dataUltimaAlteracao(agora)
+                .itens(List.of(item))
+                .build();
+
+        PedidoResponseJson response = convertToPedidoResponseJson(entity);
+
+        assertThat(response).isNotNull();
+        assertThat(response.id()).isEqualTo(id);
+        assertThat(response.numeroPedido()).isEqualTo(987);
+        assertThat(response.documentoCliente()).isEqualTo("00011122233");
+        assertThat(response.valorTotal()).isEqualByComparingTo("123.45");
+        assertThat(response.status()).isEqualTo(StatusPedido.FECHADO_COM_SUCESSO);
+        assertThat(response.itens()).hasSize(1);
+        ItemPedidoResponseJson itemResponse = response.itens().get(0);
+        assertThat(itemResponse.sku()).isEqualTo("PROD-99");
+        assertThat(itemResponse.quantidade()).isEqualTo(3);
+    }
+
+}
